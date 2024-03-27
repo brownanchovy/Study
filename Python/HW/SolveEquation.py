@@ -1,6 +1,6 @@
 #시작구간, 끝구간
 start, end = 1.0, 2.0
-repeat = 1
+repeat: int = 1
 
 #탐색구간의 중간값을 리턴
 def mid(a, b):
