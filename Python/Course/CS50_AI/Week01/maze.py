@@ -124,7 +124,7 @@ class Maze():
 
         # Initialize frontier to just the starting position
         start = Node(state=self.start, parent=None, action=None) #시작지점의 node class state는 좌표, 시작지점이므로 이전 node는 존재 없음
-        frontier = StackFrontier() #stackforntier class instance 생성
+        frontier = QueueFrontier() #stackforntier class instance 생성
         frontier.add(start)
 
         # Initialize an empty explored set
