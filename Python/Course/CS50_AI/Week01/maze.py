@@ -29,7 +29,7 @@ class StackFrontier():
             return node
 
 
-class QueueFrontier(StackFrontier):
+class QueueFrontier(StackFrontier): #클래스 상속 부모->StackFrontier, 자식 ->QueueFrontier
 
     def remove(self):
         if self.empty():
@@ -64,10 +64,10 @@ class Maze():
             row = []
             for j in range(self.width):
                 try:
-                    if contents[i][j] == "A":
+                    if contents[i][j] == "A": #시작지점 좌표 찍기
                         self.start = (i, j)
                         row.append(False)
-                    elif contents[i][j] == "B":
+                    elif contents[i][j] == "B": #도착지점 좌표 찍기
                         self.goal = (i, j)
                         row.append(False)
                     elif contents[i][j] == " ":
@@ -78,16 +78,16 @@ class Maze():
                     row.append(False)
             self.walls.append(row)
 
-        self.solution = None
+        self.solution = None #초기세팅
 
 
     def print(self):
         solution = self.solution[1] if self.solution is not None else None
         print()
-        for i, row in enumerate(self.walls):
+        for i, row in enumerate(self.walls): #for문과 동일
             for j, col in enumerate(row):
                 if col:
-                    print("█", end="")
+                    print("█", end="") #벽
                 elif (i, j) == self.start:
                     print("A", end="")
                 elif (i, j) == self.goal:
@@ -97,7 +97,7 @@ class Maze():
                 else:
                     print(" ", end="")
             print()
-        print()
+        print() #클래스 선언 후 호출
 
 
     def neighbors(self, state):
@@ -110,21 +110,21 @@ class Maze():
         ]
 
         result = []
-        for action, (r, c) in candidates:
+        for action, (r, c) in candidates: #node에서 이동가능한 경우를 리스트로 반환
             if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
                 result.append((action, (r, c)))
         return result
 
 
-    def solve(self):
+    def solve(self): #3번째 호출
         """Finds a solution to maze, if one exists."""
 
         # Keep track of number of states explored
         self.num_explored = 0
 
         # Initialize frontier to just the starting position
-        start = Node(state=self.start, parent=None, action=None)
-        frontier = StackFrontier()
+        start = Node(state=self.start, parent=None, action=None) #시작지점의 node class state는 좌표, 시작지점이므로 이전 node는 존재 없음
+        frontier = StackFrontier() #stackforntier class instance 생성
         frontier.add(start)
 
         # Initialize an empty explored set
@@ -142,15 +142,15 @@ class Maze():
             self.num_explored += 1
 
             # If node is the goal, then we have a solution
-            if node.state == self.goal:
+            if node.state == self.goal: #node의 상태가 goal의 좌표일 때
                 actions = []
                 cells = []
-                while node.parent is not None:
+                while node.parent is not None: #node의 역추적 --> reverse는 시작부터 골 지점까지 도달하기 위해
                     actions.append(node.action)
                     cells.append(node.state)
-                    node = node.parent
-                actions.reverse()
-                cells.reverse()
+                    node = node.parent #
+                actions.reverse() #
+                cells.reverse() #
                 self.solution = (actions, cells)
                 return
 
@@ -160,7 +160,7 @@ class Maze():
             # Add neighbors to frontier
             for action, state in self.neighbors(node.state):
                 if not frontier.contains_state(state) and state not in self.explored:
-                    child = Node(state=state, parent=node, action=action)
+                    child = Node(state=state, parent=node, action=action) #child는 node class, node class 초깃값을 설정하고 ,frontier class instance 에 추가
                     frontier.add(child)
 
 
