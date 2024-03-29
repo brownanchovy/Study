@@ -8,14 +8,7 @@ X = "X"
 O = "O"
 EMPTY = None
 
-class Node():
-    def __init__(self, parent, layer):
-        self.parent = parent
-        self.layer = layer
-
 def initial_state():
-    parent = None
-    layer = 0
     #tictactoe 초기 상태를 리턴 2차원 배열 리스트
     return [[EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY],
@@ -27,17 +20,16 @@ def player(board):
     Returns player who has the next turn on a board.
     """
     count_x = 0
-    count_y = 0
+    count_o = 0
     for row in board:
         count_x += row.count('X')
-        count_y += row.count('Y')
-    if count_x >= count_y:
+        count_o += row.count('O')
+    if count_x <= count_o:
         return 'X'
     else:
-        return 'Y'
+        return 'O'
 
-
-def actions(board, val):
+def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
@@ -45,14 +37,21 @@ def actions(board, val):
     able = []
     for i, row in enumerate(board):  # for문과 동일
         for j, col in enumerate(row):
-            if board[i][j] is val:
+            if board[i][j] is None:
                 able.append((i,j))
-                return able
+    return able
 
-def none():
-    return None
-def exist():
-    return not None
+def exist(board):
+    """
+    Returns set of all possible actions (i, j) available on the board.
+    """
+    # for문과 동일
+    able = []
+    for i, row in enumerate(board):  # for문과 동일
+        for j, col in enumerate(row):
+            if board[i][j] is not None:
+                able.append((i,j))
+    return able
 
 
 def result(board, action):
@@ -61,11 +60,11 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     cp_board = copy.deepcopy(board)
-    if action not in actions(cp_board, none()):
-        raise Exception("That is not possible")
-    else:
+    if action in actions(cp_board):
         row, col = action
-        cp_board[row][col]=player(cp_board)
+        cp_board[row][col] = player(cp_board)
+    else:
+        raise Exception('Wrong')
     return cp_board
 
 
@@ -73,26 +72,29 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    for tuple in actions(board, exist()):
-        x, y = tuple
-        x1, y1 = x, y
-        list_dx = [-1, 1, -1, 1, 0, 0, 1, -1]
-        list_dy = [0, 0, -1, 1, -1, 1, -1, 1]
-        for i in range(0, len(list_dx), 2):
-            cnt = 1
-            for j in range(i, i + 2):
-                dx, dy = list_dx[j], list_dy[j]
-                x, y = x1, y1
-                while True:
-                    x, y = x + dx, y + dy
-                    if board[x][y] is IndexError or board[x][y] != player(board):
-                        break
-                    else:
-                        cnt += 1
-            if cnt >= 3:
-                return player(board)
+    try:
+        print(exist(board))
+        for tuple in exist(board):
+            x, y = tuple
+            x1, y1 = x, y
+            list_dx = [-1, 1, -1, 1, 0, 0, 1, -1]
+            list_dy = [0, 0, -1, 1, -1, 1, -1, 1]
+            for i in range(0, len(list_dx), 2):
+                cnt = 1
+                for j in range(i, i + 2):
+                    dx, dy = list_dx[j], list_dy[j]
+                    x, y = x1, y1
+                    while True:
+                        x, y = x + dx, y + dy
+                        if x >= 3 or y >= 3 or board[x][y] != board[x1][y1]:
+                            break
+                        else:
+                            cnt += 1
+                if cnt >= 3:
+                    return board[x1][y1]
+            return None
+    except TypeError:
         return None
-
 
 
 def terminal(board):
@@ -100,7 +102,7 @@ def terminal(board):
     Returns True if game is over, False otherwise.
     """
     #winner 사용
-    if actions(board,none()) == [] or winner(board) is not None:
+    if actions(board) == [] or winner(board) is not None:
         return True
     else:
         return False
@@ -126,14 +128,13 @@ def minimax(board):
     """
     bestscore = -math.inf
     bestmove = None
-    for move in actions(board,exist()):
+    for move in actions(board):
         board = result(board, move)
-        curr_score = helper(False,board)
+        curr_score = helper(False, board)
         if (curr_score > bestscore):
             bestscore = curr_score
             bestmove = move
     return bestmove
-
 
 def helper(maxturn, board):
     if terminal(board):
@@ -141,8 +142,8 @@ def helper(maxturn, board):
         return state
 
     score= []
-    for move in actions(board,exist()):
+    for move in actions(board):
         board = result(board, move)
         score.append(helper(not maxturn, board))
 
-    return max(score) if maxturn else  min(score)
+    return max(score) if maxturn else min(score)
