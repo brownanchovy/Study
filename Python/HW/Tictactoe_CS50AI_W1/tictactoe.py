@@ -8,8 +8,14 @@ X = "X"
 O = "O"
 EMPTY = None
 
+class Node():
+    def __init__(self, parent, layer):
+        self.parent = parent
+        self.layer = layer
 
 def initial_state():
+    parent = None
+    layer = 0
     #tictactoe 초기 상태를 리턴 2차원 배열 리스트
     return [[EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY],
@@ -42,6 +48,7 @@ def actions(board, val):
             if board[i][j] is val:
                 able.append((i,j))
                 return able
+
 def none():
     return None
 def exist():
@@ -110,21 +117,32 @@ def utility(board):
         else: return 0
 
 
+#https://gist.github.com/yigitpirildak/0b9b1a0447ab87c749ea4c8f8948c4c2 참조
+
 def minimax(board):
     #action 튜플 반환
     """
     Returns the optimal action for the current player on the board.
     """
+    bestscore = -math.inf
+    bestmove = None
+    for move in actions(board,exist()):
+        board = result(board, move)
+        curr_score = helper(False,board)
+        if (curr_score > bestscore):
+            bestscore = curr_score
+            bestmove = move
+    return bestmove
+
+
+def helper(maxturn, board):
     if terminal(board):
-        return None
-    else:
-        while True:
+        state = utility(board)
+        return state
 
+    score= []
+    for move in actions(board,exist()):
+        board = result(board, move)
+        score.append(helper(not maxturn, board))
 
-def minium(board):
-    for i in actions(board, none()):
-
-        maxium(result(board,i))
-def maxium(board):
-    for i in actions(board, none()):
-        minium(result(board,i))
+    return max(score) if maxturn else  min(score)
