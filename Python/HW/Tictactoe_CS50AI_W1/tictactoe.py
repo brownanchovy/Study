@@ -93,7 +93,7 @@ def winner(board):
                 if cnt >= 3:
                     return board[x1][y1]
             return None
-    except TypeError:
+    except:
         return None
 
 
