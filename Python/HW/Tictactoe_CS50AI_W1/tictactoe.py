@@ -7,6 +7,7 @@ import math
 X = "X"
 O = "O"
 EMPTY = None
+set_minus = {(0,0),(0,1),(0,2),(1,0),(2,0),(1,2),(2,1),(1,1),(2,2)}
 
 def initial_state():
     #tictactoe 초기 상태를 리턴 2차원 배열 리스트
@@ -29,42 +30,28 @@ def player(board):
     else:
         return 'O'
 
-def actions(board):
-    """
-    Returns set of all possible actions (i, j) available on the board.
-    """
-    # for문과 동일
-    able = []
+def actions(board) -> set:
+    able = set()
     for i, row in enumerate(board):  # for문과 동일
         for j, col in enumerate(row):
             if board[i][j] is None:
-                able.append((i,j))
+                able.add((i,j))
+    print(able)
     return able
-
-def exist(board):
-    """
-    Returns set of all possible actions (i, j) available on the board.
-    """
-    # for문과 동일
-    able = []
-    for i, row in enumerate(board):  # for문과 동일
-        for j, col in enumerate(row):
-            if board[i][j] is not None:
-                able.append((i,j))
-    return able
-
 
 def result(board, action):
     #action 튜플
     """
     Returns the board that results from making move (i, j) on the board.
     """
+    print('result')
     cp_board = copy.deepcopy(board)
     if action in actions(cp_board):
         row, col = action
         cp_board[row][col] = player(cp_board)
     else:
-        raise Exception('Wrong')
+        raise Exception('Wrong Move')
+    print(cp_board)
     return cp_board
 
 
@@ -73,8 +60,7 @@ def winner(board):
     Returns the winner of the game, if there is one.
     """
     try:
-        print(exist(board))
-        for tuple in exist(board):
+        for tuple in (set_minus - actions(board)):
             x, y = tuple
             x1, y1 = x, y
             list_dx = [-1, 1, -1, 1, 0, 0, 1, -1]
@@ -86,14 +72,16 @@ def winner(board):
                     x, y = x1, y1
                     while True:
                         x, y = x + dx, y + dy
-                        if x >= 3 or y >= 3 or board[x][y] != board[x1][y1]:
+                        if -1 >= x >= 3 or -1 >= y >= 3:
+                            if board[x][y] != board[x1][y1]:
+                                break
                             break
                         else:
                             cnt += 1
                 if cnt >= 3:
                     return board[x1][y1]
             return None
-    except TypeError:
+    except:
         return None
 
 
@@ -102,9 +90,11 @@ def terminal(board):
     Returns True if game is over, False otherwise.
     """
     #winner 사용
-    if actions(board) == [] or winner(board) is not None:
+    if len(actions(board))==0 or winner(board) is not None:
+        print('end')
         return True
     else:
+        print('not end')
         return False
 
 
@@ -126,15 +116,16 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    bestscore = -math.inf
-    bestmove = None
-    for move in actions(board):
-        board = result(board, move)
-        curr_score = helper(False, board)
-        if (curr_score > bestscore):
-            bestscore = curr_score
-            bestmove = move
-    return bestmove
+    if terminal(board):
+        bestscore = -math.inf
+        bestmove = None
+        for move in actions(board):
+            board = result(board, move)
+            curr_score = helper(False, board)
+            if (curr_score > bestscore):
+                bestscore = curr_score
+                bestmove = move
+        return bestmove
 
 def helper(maxturn, board):
     if terminal(board):
