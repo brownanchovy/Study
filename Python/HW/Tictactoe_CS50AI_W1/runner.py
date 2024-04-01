@@ -92,7 +92,6 @@ while True:
             tiles.append(row)
 
         game_over = ttt.terminal(board)
-        print(game_over)
         player = ttt.player(board)
 
         # Show title
@@ -116,7 +115,6 @@ while True:
             if ai_turn:
                 time.sleep(0.5)
                 move = ttt.minimax(board)
-                print(move)
                 board = ttt.result(board, move)
                 ai_turn = False
             else:

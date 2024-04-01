@@ -83,17 +83,17 @@ def winner(board):
     """
 
 
-    if (board[0] == player(board) and board[1] == player(board) and board[2] == player(board)) or \
-        (board[3] == player(board) and board[4] == player(board) and board[5] == player(board)) or \
-        (board[6] == player(board) and board[7] == player(board) and board[8] == player(board)) or \
-        (board[0] == player(board) and board[3] == player(board) and board[6] == player(board)) or \
-        (board[1] == player(board) and board[4] == player(board) and board[7] == player(board)) or \
-        (board[2] == player(board) and board[5] == player(board) and board[8] == player(board)) or \
-        (board[0] == player(board) and board[4] == player(board) and board[8] == player(board)) or \
-        (board[2] == player(board) and board[4] == player(board) and board[6] == player(board)):
-        return True
+    if (board[0][0] == player(board) and board[0][1] == player(board) and board[0][2] == player(board)) or \
+        (board[1][0] == player(board) and board[1][1] == player(board) and board[1][2] == player(board)) or  \
+        (board[2][0] == player(board) and board[2][1] == player(board) and board[2][2] == player(board)) or  \
+        (board[0][0] == player(board) and board[1][0] == player(board) and board[2][0] == player(board)) or  \
+        (board[0][1] == player(board) and board[1][1] == player(board) and board[2][1] == player(board)) or  \
+        (board[0][2] == player(board) and board[1][2] == player(board) and board[2][2] == player(board)) or  \
+        (board[0][0] == player(board) and board[1][1] == player(board) and board[2][2] == player(board)) or \
+        (board[0][2] == player(board) and board[1][1] == player(board) and board[2][0] == player(board)):
+        return player(board)
     else:
-        return False
+        return None
 
 
 
