@@ -63,7 +63,6 @@ def main():
     # Load data from files into memory
     print("Loading data...")
     load_data(directory)
-    print(people,'\n',names,'\n',movies)
     print("Data loaded.")
 
     source = person_id_for_name(input("Name: "))
@@ -88,18 +87,42 @@ def main():
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
 
-def shortest_path(source, target):
+def shortest_path(source, target): #초기와 말기의 id가 들어감
     """
     Returns the shortest list of (movie_id, person_id) pairs
     that connect the source to the target.
 
     If no possible path, returns None.
     """
+    frontier = QueueFrontier()
+    explored = set()
+    answer = []
+    #초기 queuefrontier 내용물 채우기
+    nextset: set = neighbors_for_person(source)
+    for tuple in nextset:
+        if tuple not in explored:
+            child = Node(state=tuple, parent=source)
+            frontier.add(child)
+    if len(frontier.frontier)==0:return None
+    while True:
+        if len(frontier.frontier) == 0: return None
+        node = frontier.remove()
+        movie_id, name_id = node.state
+        #역행
+        if name_id == target:
+            while node.parent is not source:
+                answer.append(node.state)
+                node = node.parent
+            answer.reverse()
+            return answer
+        #새로운 노드 생성
+        explored.add(node.state)
+        for tuple in neighbors_for_person(name_id):
+            if tuple not in explored:
+                child = Node(state=tuple, parent=node)
+                frontier.add(child)
 
-    # TODO
-    raise NotImplementedError
-
-
+#name to id
 def person_id_for_name(name):
     """
     Returns the IMDB id for a person's name,
@@ -137,7 +160,7 @@ def neighbors_for_person(person_id):
         for person_id in movies[movie_id]["stars"]:
             neighbors.add((movie_id, person_id))
     return neighbors
-
+#neighbors set, 내용물은 tuple (movie_id, person_id)
 
 if __name__ == "__main__":
     main()
