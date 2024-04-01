@@ -1,3 +1,4 @@
+#util file class node stackfrontier queuefrontier
 import csv
 import sys
 
@@ -27,9 +28,9 @@ def load_data(directory):
                 "movies": set()
             }
             if row["name"].lower() not in names:
-                names[row["name"].lower()] = {row["id"]}
+                names[row["name"].lower()] = {row["id"]} #value로 집합이 들어감
             else:
-                names[row["name"].lower()].add(row["id"])
+                names[row["name"].lower()].add(row["id"]) #value로 된 집합에 add method 사용
 
     # Load movies
     with open(f"{directory}/movies.csv", encoding="utf-8") as f:
@@ -46,6 +47,7 @@ def load_data(directory):
         reader = csv.DictReader(f)
         for row in reader:
             try:
+                #집합
                 people[row["person_id"]]["movies"].add(row["movie_id"])
                 movies[row["movie_id"]]["stars"].add(row["person_id"])
             except KeyError:
@@ -53,6 +55,7 @@ def load_data(directory):
 
 
 def main():
+    #python terminal을 통해 argument 받아들이기
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
     directory = sys.argv[1] if len(sys.argv) == 2 else "large"
@@ -60,6 +63,7 @@ def main():
     # Load data from files into memory
     print("Loading data...")
     load_data(directory)
+    print(people,'\n',names,'\n',movies)
     print("Data loaded.")
 
     source = person_id_for_name(input("Name: "))
