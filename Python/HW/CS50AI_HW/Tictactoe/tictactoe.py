@@ -36,7 +36,6 @@ def actions(board):
         for j, col in enumerate(row):
             if board[i][j] is None:
                 able.add((i,j))
-    print(able)
     return able
 
 def result(board, action):
@@ -44,25 +43,23 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    print('result')
     cp_board = copy.deepcopy(board)
     if action in actions(cp_board):
         row, col = action
         cp_board[row][col] = player(cp_board)
     else:
         raise Exception('Wrong Move')
-    print(cp_board)
     return cp_board
 
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
-    """
+
+    print(set_minus - actions(board))
     try:
         for tuple in (set_minus - actions(board)):
-            x, y = tuple
-            x1, y1 = x, y
+            x1, y1 = tuple
             list_dx = [-1, 1, -1, 1, 0, 0, 1, -1]
             list_dy = [0, 0, -1, 1, -1, 1, -1, 1]
             for i in range(0, len(list_dx), 2):
@@ -72,17 +69,32 @@ def winner(board):
                     x, y = x1, y1
                     while True:
                         x, y = x + dx, y + dy
-                        if -1 >= x >= 3 or -1 >= y >= 3:
-                            if board[x][y] != board[x1][y1]:
-                                break
-                            break
+                        print(x,y)
+                        if (x < 0 or x >= 3 or y < 0 or y >= 3) or (board[x][y] != board[x1][y1]):
+                            break;
                         else:
                             cnt += 1
+                print(cnt)
                 if cnt >= 3:
                     return board[x1][y1]
             return None
     except:
         return None
+    """
+
+
+    if (board[0][0] == player(board) and board[0][1] == player(board) and board[0][2] == player(board)) or \
+        (board[1][0] == player(board) and board[1][1] == player(board) and board[1][2] == player(board)) or  \
+        (board[2][0] == player(board) and board[2][1] == player(board) and board[2][2] == player(board)) or  \
+        (board[0][0] == player(board) and board[1][0] == player(board) and board[2][0] == player(board)) or  \
+        (board[0][1] == player(board) and board[1][1] == player(board) and board[2][1] == player(board)) or  \
+        (board[0][2] == player(board) and board[1][2] == player(board) and board[2][2] == player(board)) or  \
+        (board[0][0] == player(board) and board[1][1] == player(board) and board[2][2] == player(board)) or \
+        (board[0][2] == player(board) and board[1][1] == player(board) and board[2][0] == player(board)):
+        return player(board)
+    else:
+        return None
+
 
 
 def terminal(board):
@@ -91,10 +103,8 @@ def terminal(board):
     """
     #winner 사용
     if len(actions(board))==0 or winner(board) is not None:
-        print('end')
         return True
     else:
-        print('not end')
         return False
 
 
@@ -116,12 +126,13 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    if terminal(board):
+    if not terminal(board):
         bestscore = -math.inf
         bestmove = None
         for move in actions(board):
             board = result(board, move)
             curr_score = helper(False, board)
+            print(curr_score)
             if (curr_score > bestscore):
                 bestscore = curr_score
                 bestmove = move

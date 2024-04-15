@@ -21,4 +21,8 @@ def money(time_paid: int, time: int) -> float:
     else:
         return time_paid*time
 print (money(time_paid,time))
+
+def addsub(x:int, y:int) -> tuple:
+    return x-y, x+y
+minus, add = addsub(10, 20)
 '''
