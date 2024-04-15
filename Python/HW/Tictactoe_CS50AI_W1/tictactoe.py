@@ -30,8 +30,8 @@ def player(board):
     else:
         return 'O'
 
-def actions(board) -> set:
-    able = set()
+def actions(board):
+    able=set()
     for i, row in enumerate(board):  # for문과 동일
         for j, col in enumerate(row):
             if board[i][j] is None:
